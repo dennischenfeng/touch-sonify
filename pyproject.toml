@@ -1,10 +1,11 @@
 [tool.poetry]
-name = "\u001b[z"
+name = "touch-sonify"
 version = "0.1.0"
-description = "Data sonification with touch as the primary interaction."
+description = "Data sonification with touch as the main interaction."
 authors = ["Dennis Feng <dennisfeng2@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+packages = [{include = "touch_sonify"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -13,8 +14,8 @@ beautifulsoup4 = "^4.12.2"
 
 
 [tool.poetry.group.dev.dependencies]
-audio-plot-lib = "^0.1.0"
 pytest = "^7.3.1"
+audio-plot-lib = "^0.1.0"
 
 [build-system]
 requires = ["poetry-core"]
