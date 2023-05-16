@@ -5,7 +5,7 @@ from touch_sonify.paths import get_project_root_dir
 from typing import List, Dict, Optional
 from bokeh import events
 from bokeh.plotting import figure, show, output_file, save
-from bokeh.models import CustomJS, TapTool, HoverTool
+from bokeh.models import CustomJS, ColumnDataSource
 from pathlib import Path
 
 
@@ -22,18 +22,23 @@ def plot(
         output_file_path = Path("temp.html")
 
     p = figure()
-    p.scatter(x=x, y=y, color=c)
+    data_source = ColumnDataSource(dict(
+        x=x,
+        y=y,
+        c=c,
+    ))
+    p.scatter(x="x", y="y", color="c", source=data_source)
     output_file(filename=output_file_path, title="title1")
     
     # tap event listener
-    code_tap = """
-    let x = cb_obj.x;
-    let y = cb_obj.y;
-    window.speechSynthesis.cancel();
-    let msg = new SpeechSynthesisUtterance(`x is ${x}, and y is ${y}`)
-    window.speechSynthesis.speak(msg);
-    """
-    p.js_on_event(events.Tap, CustomJS(code=code_tap))
+    with open(get_project_root_dir() / "touch_sonify/code_snippets/sonify_aperture.js") as f:
+        code_tap = f.read()
+    custom_js_args = dict(
+        xRange=p.x_range,
+        yRange=p.y_range,
+        data=data_source,
+    )
+    p.js_on_event(events.Tap, CustomJS(args=custom_js_args, code=code_tap))
 
     save(p)
 
