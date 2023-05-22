@@ -29,6 +29,8 @@ df.print();
 curData = df;
 console.log(`radius: ${apertureNormRadius}`);
 
+let cMin = Math.min(...df.c.values);
+let cMax = Math.max(...df.c.values);
 
 // wrangle df
 df = df.query(df.distanceNorm.lt(apertureNormRadius));
@@ -40,8 +42,7 @@ df = df.resetIndex();
 console.log("after wrangle");
 df.print();
 
-let cMin = Math.min(...df.c.values);
-let cMax = Math.max(...df.c.values);
+
 
 let startTime = audioCtx.currentTime;
 for (let i = 0; i < df.shape[0]; i++) {
