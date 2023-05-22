@@ -21,7 +21,8 @@ def plot(
     if not output_file_path:
         output_file_path = Path("temp.html")
 
-    p = figure()
+    p = figure() # todo: toolbar loc?
+    # p.toolbar.active_drag = None # todo: test
     data_source = ColumnDataSource(dict(
         x=x,
         y=y,
@@ -31,14 +32,21 @@ def plot(
     output_file(filename=output_file_path, title="title1")
     
     # tap event listener
-    with open(get_project_root_dir() / "touch_sonify/code_snippets/sonify_aperture.js") as f:
+    with open(get_project_root_dir() / "touch_sonify/code_snippets/sonify_aperture.js", "r") as f:
         code_tap = f.read()
+    with open(get_project_root_dir() / "touch_sonify/code_snippets/sonifyApertureOnTouchMove.js", "r") as f:
+        code_pan = f.read()
+    with open(get_project_root_dir() / "touch_sonify/code_snippets/sonifyApertureOnTouchEnd.js", "r") as f:
+        code_pan_end = f.read()
     custom_js_args = dict(
         xRange=p.x_range,
         yRange=p.y_range,
         dataSource=data_source,
     )
     p.js_on_event(events.Tap, CustomJS(args=custom_js_args, code=code_tap))
+    p.js_on_event(events.Pan, CustomJS(args=custom_js_args, code=code_pan))
+    p.js_on_event(events.PanEnd, CustomJS(args=custom_js_args, code=code_pan_end))
+    # p.js_on_event(events.Pan, CustomJS(args=custom_js_args, code=code_tap))
 
     save(p)
 
@@ -60,7 +68,7 @@ def _insert_preparatory_html(file_path: Path) -> None:
     """
     soup.html.insert(0, BeautifulSoup(code_viewport, "html.parser"))
 
-    with open(get_project_root_dir() / "touch_sonify/code_snippets/style.css", "r") as f:
+    with open(get_project_root_dir() / "touch_sonify/code_snippets/style.css") as f:
         code_style = f.read();
     full_code_style = f"""
     <style>

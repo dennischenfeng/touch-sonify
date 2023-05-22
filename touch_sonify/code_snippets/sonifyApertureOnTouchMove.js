@@ -9,7 +9,7 @@ yRange.start = 0;
 yRange.end = 10;
 
 let pitchFreqRange = [300,800];
-let beepDuration = 0.5;
+let beepDuration = 2;
 
 let xTap = cb_obj.x;
 let yTap = cb_obj.y;
@@ -49,35 +49,33 @@ df.print();
 
 
 let startTime = audioCtx.currentTime;
-for (let i = 0; i < df.shape[0]; i++) {
-	let c = df.c.values[i];
+let i = 0;
+let c = df.c.values[i];
 
-    let cNorm;
-    if (cMin != cMax) {
-        cNorm = normalizePositionScalar(c, cMin, cMax);
-    } else {
-        cNorm = 0.5;
-    };
-
-	let distanceNorm = df.distanceNorm.values[i];
-	let pitchFreq = pitchFreqRange[0] + cNorm * (pitchFreqRange[1] - pitchFreqRange[0]);
-	let gain = (apertureNormRadius - distanceNorm) / apertureNormRadius;
-
-    console.log(`cMin: ${cMin}`);
-    console.log(`cMax: ${cMax}`);
-
-    console.log(`cNorm: ${cNorm}`);
-    console.log(`distanceNorm: ${distanceNorm}`);
-    console.log(`gain: ${gain}`);
-    console.log(`pitch: ${pitchFreq}`);
-
-    if (pitchFreq != previousPitchFreq) {
-        oscNode.frequency.setValueAtTime(pitchFreq, startTime + i * beepDuration);
-        previousPitchFreq = pitchFreq;
-    }
-	gainNode.gain.setValueAtTime(gain, startTime + i * beepDuration);
-	gainNode.gain.setValueAtTime(0, startTime + (i + 1) * beepDuration);
+let cNorm;
+if (cMin != cMax) {
+    cNorm = normalizePositionScalar(c, cMin, cMax);
+} else {
+    cNorm = 0.5;
 };
+
+let distanceNorm = df.distanceNorm.values[i];
+let pitchFreq = pitchFreqRange[0] + cNorm * (pitchFreqRange[1] - pitchFreqRange[0]);
+let gain = (apertureNormRadius - distanceNorm) / apertureNormRadius;
+
+console.log(`cMin: ${cMin}`);
+console.log(`cMax: ${cMax}`);
+
+console.log(`cNorm: ${cNorm}`);
+console.log(`distanceNorm: ${distanceNorm}`);
+console.log(`gain: ${gain}`);
+console.log(`pitch: ${pitchFreq}`);
+
+if (pitchFreq != previousPitchFreq) {
+    oscNode.frequency.setValueAtTime(pitchFreq, startTime + i * beepDuration);
+    previousPitchFreq = pitchFreq;
+}
+gainNode.gain.setValueAtTime(gain, startTime + i * beepDuration);
 
 // window.speechSynthesis.cancel();
 // let msg = new SpeechSynthesisUtterance(`x is ${xTap}, and y is ${yTap}`)

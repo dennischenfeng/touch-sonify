@@ -2,6 +2,7 @@
 //todo: test
 let curData;
 
+let previousPitchFreq = 300;
 let apertureNormRadius = 0.2;
 
 let audioCtx;
