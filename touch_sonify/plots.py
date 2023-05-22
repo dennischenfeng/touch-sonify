@@ -60,6 +60,15 @@ def _insert_preparatory_html(file_path: Path) -> None:
     """
     soup.html.insert(0, BeautifulSoup(code_viewport, "html.parser"))
 
+    with open(get_project_root_dir() / "touch_sonify/code_snippets/style.css", "r") as f:
+        code_style = f.read();
+    full_code_style = f"""
+    <style>
+    {code_style}
+    </style>
+    """
+    soup.html.insert(0, BeautifulSoup(full_code_style, "html.parser"))
+
     code_imports = """
     <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
     """
