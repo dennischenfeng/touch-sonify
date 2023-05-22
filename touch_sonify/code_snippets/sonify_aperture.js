@@ -31,21 +31,38 @@ console.log(`radius: ${apertureNormRadius}`);
 
 
 // wrangle df
-df = df.sortValues("distanceNorm")
 df = df.query(df.distanceNorm.lt(apertureNormRadius));
+if (df.shape[0] > 0) {
+    df = df.sortValues("distanceNorm");
+};
 df = df.resetIndex();
 
-console.log("df after wrangle");
+console.log("after wrangle");
+df.print();
 
-df.print()
+let cMin = Math.min(...df.c.values);
+let cMax = Math.max(...df.c.values);
 
 let startTime = audioCtx.currentTime;
 for (let i = 0; i < df.shape[0]; i++) {
 	let c = df.c.values[i];
+
+    let cNorm;
+    if (cMin != cMax) {
+        cNorm = normalizePositionScalar(c, cMin, cMax);
+    } else {
+        cNorm = 0.5;
+    };
+
 	let distanceNorm = df.distanceNorm.values[i];
-	let pitchFreq = pitchFreqRange[0] + c * (pitchFreqRange[1] - pitchFreqRange[0]);
+	let pitchFreq = pitchFreqRange[0] + cNorm * (pitchFreqRange[1] - pitchFreqRange[0]);
 	let gain = (apertureNormRadius - distanceNorm) / apertureNormRadius;
 
+    console.log(`cMin: ${cMin}`);
+    console.log(`cMax: ${cMax}`);
+
+    console.log(`cNorm: ${cNorm}`);
+    console.log(`distanceNorm: ${distanceNorm}`);
     console.log(`gain: ${gain}`);
     console.log(`pitch: ${pitchFreq}`);
 	oscNode.frequency.setValueAtTime(pitchFreq, startTime + i * beepDuration);
