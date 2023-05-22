@@ -1,4 +1,9 @@
 // Initialize audioContext for the initialize-audio button
+//todo: test
+let curData;
+
+let apertureNormRadius = 0.2;
+
 let audioCtx;
 let oscNode;
 let gainNode;

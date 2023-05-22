@@ -36,7 +36,7 @@ def plot(
     custom_js_args = dict(
         xRange=p.x_range,
         yRange=p.y_range,
-        data=data_source,
+        dataSource=data_source,
     )
     p.js_on_event(events.Tap, CustomJS(args=custom_js_args, code=code_tap))
 
@@ -44,6 +44,8 @@ def plot(
 
     # use soup to add head content
     _insert_preparatory_html(output_file_path)
+
+    return output_file_path
 
 def _insert_preparatory_html(file_path: Path) -> None:
     """
