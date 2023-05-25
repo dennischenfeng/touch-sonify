@@ -1,26 +1,27 @@
 // Initialize audioContext for the initialize-audio button
 
-let previousPitchFreq = 300;
-let apertureNormRadius = 0.2;
-let pitchFreqRange = [300,800];
-let beepDuration = 0.5;
-
-let audioCtx;
-let oscNode;
-let gainNode;
+let appVars = {
+	previousPitchFreq : 300,
+	apertureNormRadius: 0.2,
+	pitchFreqRange: [300, 800],
+	beepDuration: 0.5,
+	AudioCtx: null,
+	oscNode: null,
+	gainNode: null,
+};
 
 let audioBtn = document.getElementById("audio-button")
 
 audioBtn .addEventListener("click", e => {
-	audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-	oscNode = audioCtx.createOscillator();
-	gainNode = audioCtx.createGain();
+	appVars.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+	appVars.oscNode = appVars.audioCtx.createOscillator();
+	appVars.gainNode = appVars.audioCtx.createGain();
 
-	oscNode.type = "sine";
-	oscNode.frequency.setValueAtTime(400, audioCtx.currentTime);
+	appVars.oscNode.type = "sine";
+	appVars.oscNode.frequency.setValueAtTime(400, appVars.audioCtx.currentTime);
 
-	oscNode.connect(gainNode);
-	gainNode.connect(audioCtx.destination);
-	oscNode.start();
-	gainNode.gain.setValueAtTime(0, audioCtx.currentTime + 0.5);
+	appVars.oscNode.connect(appVars.gainNode);
+	appVars.gainNode.connect(appVars.audioCtx.destination);
+	appVars.oscNode.start();
+	appVars.gainNode.gain.setValueAtTime(0, appVars.audioCtx.currentTime + 0.5);
 });
