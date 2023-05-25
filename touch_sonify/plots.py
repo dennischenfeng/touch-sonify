@@ -31,11 +31,20 @@ def plot(
     p.scatter(x="x", y="y", color="c", source=data_source)
     output_file(filename=output_file_path, title="title1")
     
-    # tap event listener
-    with open(get_project_root_dir() / "touch_sonify/code_snippets/sonify_aperture.js", "r") as f:
-        code_tap = f.read()
+    # event listeners
+    with open(get_project_root_dir() / "touch_sonify/code_snippets/revertPlotRanges.js", "r") as f:
+        code_revert_ranges= f.read()
+    with open(get_project_root_dir() / "touch_sonify/code_snippets/sonifyApertureSingle.js", "r") as f:
+        code_tap = f"""
+        {code_revert_ranges}
+        {f.read()}
+        """
+        
     with open(get_project_root_dir() / "touch_sonify/code_snippets/sonifyApertureOnTouchMove.js", "r") as f:
-        code_pan = f.read()
+        code_pan = f"""
+        {code_revert_ranges}
+        {f.read()}
+        """
     with open(get_project_root_dir() / "touch_sonify/code_snippets/sonifyApertureOnTouchEnd.js", "r") as f:
         code_pan_end = f.read()
     custom_js_args = dict(
@@ -82,20 +91,23 @@ def _insert_preparatory_html(file_path: Path) -> None:
     """
     soup.head.insert(0, BeautifulSoup(code_imports, "html.parser"))
 
-    # initialize-audio button
+    # Additions to HTML body
     code_audio_button = """
     <button id="audio-button">Initialize audio</button>
     """
-    with open(get_project_root_dir() / "touch_sonify/code_snippets/initialize_audio.js", "r") as f:
+    with open(get_project_root_dir() / "touch_sonify/code_snippets/initializeAudio.js", "r") as f:
         code_audio_button_script = f.read()
+    with open(get_project_root_dir() / "touch_sonify/code_snippets/sonifyFunctions.js", "r") as f:
+        code_sonify_functions = f.read()
 
-    full_code_audio = f"""
+    full_code_additions = f"""
     {code_audio_button}
     <script> 
     {code_audio_button_script}
+    {code_sonify_functions}
     </script>
     """
-    soup.body.insert(0, BeautifulSoup(full_code_audio, "html.parser"))
+    soup.body.insert(0, BeautifulSoup(full_code_additions, "html.parser"))
 
     with open(file_path, "w") as f:
         f.write(str(soup))
