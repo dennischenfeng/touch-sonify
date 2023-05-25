@@ -1,53 +1,33 @@
-// Sonify the data points within the aperture.
-// Assumes xRange, yRange, and data are in the namespace (should be passed in `args` in CustomJS)
+// Sonify the data points within the aperture once
+// Assumes xRange, yRange, and dataSource are in the namespace (should be passed in `args` in CustomJS)
 
-//todo:test
-curData = dataSource;
-xRange.start = 0;
-xRange.end = 10;
-yRange.start = 0;
-yRange.end = 10;
+// cursor
+let xCursor = cb_obj.x;
+let yCursor = cb_obj.y;
+let xCursorNorm = normalizePositionScalar(xCursor, xRange.start, xRange.end);
+let yCursorNorm = normalizePositionScalar(yCursor, yRange.start, yRange.end);
 
-let pitchFreqRange = [300,800];
-let beepDuration = 0.5;
-
-let xTap = cb_obj.x;
-let yTap = cb_obj.y;
-let xTapNorm = normalizePositionScalar(xTap, xRange.start, xRange.end);
-let yTapNorm = normalizePositionScalar(yTap, yRange.start, yRange.end);
-
-console.log(`xTapNorm: ${xTapNorm}, yTapNorm: ${yTapNorm}`);
-console.log(`xRange: ${xRange.start}, ${xRange.end},      yRange: ${yRange.start}, ${yRange.end}`);
-
+// Dataframe to organize data points
 let df = new dfd.DataFrame(dataSource.data);
+let cMin = Math.min(...df.c.values);
+let cMax = Math.max(...df.c.values);
+
 let xNorms = normalizePosition(df.x, xRange.start, xRange.end);
 let yNorms = normalizePosition(df.y, yRange.start, yRange.end);
 df = df.addColumn("xNorm", xNorms);
 df = df.addColumn("yNorm", yNorms);
 
-let distanceNorms = getDistance(df.xNorm, df.yNorm, xTapNorm, yTapNorm);
+let distanceNorms = getDistance(df.xNorm, df.yNorm, xCursorNorm, yCursorNorm);
 df = df.addColumn("distanceNorm", distanceNorms);
 
-console.log("df before wrangle");
-df.print();
-curData = df;
-console.log(`radius: ${apertureNormRadius}`);
-
-let cMin = Math.min(...df.c.values);
-let cMax = Math.max(...df.c.values);
-
-// wrangle df
+// Filter df for data within aperture
 df = df.query(df.distanceNorm.lt(apertureNormRadius));
 if (df.shape[0] > 0) {
     df = df.sortValues("distanceNorm");
 };
 df = df.resetIndex();
 
-console.log("after wrangle");
-df.print();
-
-
-
+// Play the beeps
 let startTime = audioCtx.currentTime;
 for (let i = 0; i < df.shape[0]; i++) {
 	let c = df.c.values[i];
@@ -63,14 +43,6 @@ for (let i = 0; i < df.shape[0]; i++) {
 	let pitchFreq = pitchFreqRange[0] + cNorm * (pitchFreqRange[1] - pitchFreqRange[0]);
 	let gain = (apertureNormRadius - distanceNorm) / apertureNormRadius;
 
-    console.log(`cMin: ${cMin}`);
-    console.log(`cMax: ${cMax}`);
-
-    console.log(`cNorm: ${cNorm}`);
-    console.log(`distanceNorm: ${distanceNorm}`);
-    console.log(`gain: ${gain}`);
-    console.log(`pitch: ${pitchFreq}`);
-
     if (pitchFreq != previousPitchFreq) {
         oscNode.frequency.setValueAtTime(pitchFreq, startTime + i * beepDuration);
         previousPitchFreq = pitchFreq;
@@ -79,15 +51,10 @@ for (let i = 0; i < df.shape[0]; i++) {
 	gainNode.gain.setValueAtTime(0, startTime + (i + 1) * beepDuration);
 };
 
-// window.speechSynthesis.cancel();
-// let msg = new SpeechSynthesisUtterance(`x is ${xTap}, and y is ${yTap}`)
-// // let msg = new SpeechSynthesisUtterance(`xsStart is ${xStart}, and yStart is ${yStart}`)
-// window.speechSynthesis.speak(msg);
-
 function normalizePosition(pos, lowerBound, upperBound) {
     // Compute the position, normalized within the bounds (lower bound corresponds to 0, upper bound corresponds to 1)
     // Assumes `pos` has binary arithmetic operator methods, like add() and sub(). E.g. Danfojs series.
-    // Assumes lowerBound and upperBound are numbers (int or float)
+    // Assumes lowerBound and upperBound are scalars (int or float)
     let numerator = pos.sub(lowerBound);
     let denominator = upperBound - lowerBound;
     return numerator.div(denominator);

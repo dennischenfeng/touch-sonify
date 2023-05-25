@@ -1,9 +1,9 @@
 // Initialize audioContext for the initialize-audio button
-//todo: test
-let curData;
 
 let previousPitchFreq = 300;
 let apertureNormRadius = 0.2;
+let pitchFreqRange = [300,800];
+let beepDuration = 0.5;
 
 let audioCtx;
 let oscNode;
@@ -22,5 +22,5 @@ audioBtn .addEventListener("click", e => {
 	oscNode.connect(gainNode);
 	gainNode.connect(audioCtx.destination);
 	oscNode.start();
-	gainNode.gain.setValueAtTime(0, audioCtx.currentTime + 1);
+	gainNode.gain.setValueAtTime(0, audioCtx.currentTime + 0.5);
 });
