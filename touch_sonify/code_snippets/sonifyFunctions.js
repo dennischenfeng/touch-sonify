@@ -6,6 +6,8 @@ function sonifyAperture(
     yRange,
     dataSource,
     appVars,
+    maxNumPoints=10,
+    terminateBeepAtEnd=true,
 ) {
     // cursor
     let xCursor = cb_obj.x;
@@ -34,8 +36,9 @@ function sonifyAperture(
     df = df.resetIndex();
 
     // Play the beeps
+    let numPoints = Math.min(maxNumPoints, df.shape[0])
     let startTime = appVars.audioCtx.currentTime;
-    for (let i = 0; i < df.shape[0]; i++) {
+    for (let i = 0; i < numPoints; i++) {
         let c = df.c.values[i];
 
         let cNorm;
@@ -54,7 +57,10 @@ function sonifyAperture(
             appVars.previousPitchFreq = pitchFreq;
         }
         appVars.gainNode.gain.setValueAtTime(gain, startTime + i * appVars.beepDuration);
-        appVars.gainNode.gain.setValueAtTime(0, startTime + (i + 1) * appVars.beepDuration);
+    };
+
+    if (terminateBeepAtEnd) {
+        appVars.gainNode.gain.setValueAtTime(0, startTime + numPoints * appVars.beepDuration);
     };
 };
 

@@ -7,4 +7,5 @@ sonifyAperture(
     yRange,
     dataSource,
     appVars,
+    maxNumPoints=1,
 );
