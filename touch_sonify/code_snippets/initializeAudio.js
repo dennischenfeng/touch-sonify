@@ -8,6 +8,10 @@ let appVars = {
 	AudioCtx: null,
 	oscNode: null,
 	gainNode: null,
+	origXStart: null,
+	origYStart: null,
+	origXEnd: null,
+	origYEnd: null,
 };
 
 let audioBtn = document.getElementById("audio-button")
