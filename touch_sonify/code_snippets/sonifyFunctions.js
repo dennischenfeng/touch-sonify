@@ -38,6 +38,10 @@ function sonifyAperture(
     // Play the beeps
     let numPoints = Math.min(maxNumPoints, df.shape[0])
     let startTime = appVars.audioCtx.currentTime;
+    if (numPoints == 0) {
+        appVars.gainNode.gain.setValueAtTime(0, startTime);
+    };
+
     for (let i = 0; i < numPoints; i++) {
         let c = df.c.values[i];
 

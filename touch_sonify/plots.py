@@ -54,8 +54,8 @@ def plot(
     )
     p.js_on_event(events.Tap, CustomJS(args=custom_js_args, code=code_tap))
     p.js_on_event(events.Pan, CustomJS(args=custom_js_args, code=code_pan))
+    p.js_on_event(events.PanStart, CustomJS(args=custom_js_args, code=code_pan))
     p.js_on_event(events.PanEnd, CustomJS(args=custom_js_args, code=code_pan_end))
-    # p.js_on_event(events.Pan, CustomJS(args=custom_js_args, code=code_tap))
 
     save(p)
 
