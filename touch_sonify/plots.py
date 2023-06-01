@@ -64,15 +64,26 @@ def plot(
     p.js_on_event(events.PanStart, CustomJS(args=custom_js_args, code=code_pan))
     p.js_on_event(events.PanEnd, CustomJS(args=custom_js_args, code=code_pan_end))
 
-    # Button to initialize app variables
+    # Button to initialize the app
     initialize_button = Button(label="Initialize") 
     initialize_button.js_on_click(CustomJS(
         args=custom_js_args,
-        code=f"{code_init_audio_context}\n{code_assign_ranges}\n{code_modify_figure}",
+        code=f"""
+        {code_init_audio_context}
+        {code_assign_ranges}
+        {code_modify_figure}
+        setPageScrolling(false);
+        """,
     ))
     
+    # Button to enable page scrolling
+    page_scrolling_button = Button(label="Enable page scrolling") 
+    page_scrolling_button.js_on_click(CustomJS(
+        code="setPageScrolling(true);",
+    ))
+
     output_file(filename=output_file_path, title="title1")
-    save(column(initialize_button, p))
+    save(column(initialize_button, page_scrolling_button, p))
 
     # use soup to add head content
     _insert_preparatory_html(output_file_path)
@@ -102,11 +113,14 @@ def _insert_preparatory_html(file_path: Path) -> None:
         code_init_app_vars = f.read()
     with open(get_project_root_dir() / "touch_sonify/code_snippets/sonifyFunctions.js", "r") as f:
         code_sonify_functions = f.read()
+    with open(get_project_root_dir() / "touch_sonify/code_snippets/appFunctions.js", "r") as f:
+        code_app_functions = f.read()
 
     full_code_additions = f"""
     <script> 
     {code_init_app_vars}
     {code_sonify_functions}
+    {code_app_functions}
     </script>
     """
     soup.body.insert(0, BeautifulSoup(full_code_additions, "html.parser"))
