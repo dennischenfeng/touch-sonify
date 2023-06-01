@@ -22,7 +22,7 @@ def plot(
     if not output_file_path:
         output_file_path = Path("temp.html")
 
-    p = figure() 
+    p = figure()
     data_source = ColumnDataSource(dict(
         x=x,
         y=y,
@@ -41,6 +41,8 @@ def plot(
         code_revert_ranges= f.read()
     with open(get_project_root_dir() / "touch_sonify/code_snippets/assignPlotRanges.js", "r") as f:
         code_assign_ranges = f.read()
+    with open(get_project_root_dir() / "touch_sonify/code_snippets/modifyFigureDimensions.js", "r") as f:
+        code_modify_figure = f.read()
     with open(get_project_root_dir() / "touch_sonify/code_snippets/sonifyApertureSingle.js", "r") as f:
         code_tap = f.read()
     with open(get_project_root_dir() / "touch_sonify/code_snippets/sonifyApertureOnTouchMove.js", "r") as f:
@@ -64,7 +66,7 @@ def plot(
     initialize_button = Button(label="Initialize") 
     initialize_button.js_on_click(CustomJS(
         args=custom_js_args,
-        code=code_assign_ranges,
+        code=f"{code_assign_ranges}\n{code_modify_figure}",
     ))
     
     output_file(filename=output_file_path, title="title1")
@@ -87,15 +89,6 @@ def _insert_preparatory_html(file_path: Path) -> None:
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     """
     soup.html.insert(0, BeautifulSoup(code_viewport, "html.parser"))
-
-    with open(get_project_root_dir() / "touch_sonify/code_snippets/style.css") as f:
-        code_style = f.read();
-    full_code_style = f"""
-    <style>
-    {code_style}
-    </style>
-    """
-    soup.html.insert(0, BeautifulSoup(full_code_style, "html.parser"))
 
     code_imports = """
     <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
