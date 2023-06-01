@@ -43,6 +43,8 @@ def plot(
         code_assign_ranges = f.read()
     with open(get_project_root_dir() / "touch_sonify/code_snippets/modifyFigureDimensions.js", "r") as f:
         code_modify_figure = f.read()
+    with open(get_project_root_dir() / "touch_sonify/code_snippets/initAudioContext.js", "r") as f:
+        code_init_audio_context = f.read()
     with open(get_project_root_dir() / "touch_sonify/code_snippets/sonifyApertureSingle.js", "r") as f:
         code_tap = f.read()
     with open(get_project_root_dir() / "touch_sonify/code_snippets/sonifyApertureOnTouchMove.js", "r") as f:
@@ -66,7 +68,7 @@ def plot(
     initialize_button = Button(label="Initialize") 
     initialize_button.js_on_click(CustomJS(
         args=custom_js_args,
-        code=f"{code_assign_ranges}\n{code_modify_figure}",
+        code=f"{code_init_audio_context}\n{code_assign_ranges}\n{code_modify_figure}",
     ))
     
     output_file(filename=output_file_path, title="title1")
@@ -96,18 +98,14 @@ def _insert_preparatory_html(file_path: Path) -> None:
     soup.head.insert(0, BeautifulSoup(code_imports, "html.parser"))
 
     # Additions to HTML body
-    code_audio_button = """
-    <button id="audio-button">Initialize audio</button>
-    """
-    with open(get_project_root_dir() / "touch_sonify/code_snippets/initializeAudio.js", "r") as f:
-        code_audio_button_script = f.read()
+    with open(get_project_root_dir() / "touch_sonify/code_snippets/initAppVars.js", "r") as f:
+        code_init_app_vars = f.read()
     with open(get_project_root_dir() / "touch_sonify/code_snippets/sonifyFunctions.js", "r") as f:
         code_sonify_functions = f.read()
 
     full_code_additions = f"""
-    {code_audio_button}
     <script> 
-    {code_audio_button_script}
+    {code_init_app_vars}
     {code_sonify_functions}
     </script>
     """
