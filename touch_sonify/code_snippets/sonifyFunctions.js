@@ -17,8 +17,8 @@ function sonifyAperture(
 
     // Dataframe to organize data points
     let df = new dfd.DataFrame(dataSource.data);
-    let cMin = Math.min(...df.c.values);
-    let cMax = Math.max(...df.c.values);
+    let zMin = Math.min(...df.z.values);
+    let zMax = Math.max(...df.z.values);
 
     let xNorms = normalizePosition(df.x, xRange.start, xRange.end);
     let yNorms = normalizePosition(df.y, yRange.start, yRange.end);
@@ -43,17 +43,17 @@ function sonifyAperture(
     };
 
     for (let i = 0; i < numPoints; i++) {
-        let c = df.c.values[i];
+        let z = df.z.values[i];
 
-        let cNorm;
-        if (cMin != cMax) {
-            cNorm = normalizePositionScalar(c, cMin, cMax);
+        let zNorm;
+        if (zMin != zMax) {
+            zNorm = normalizePositionScalar(z, zMin, zMax);
         } else {
-            cNorm = 0.5;
+            zNorm = 0.5;
         };
 
         let distanceNorm = df.distanceNorm.values[i];
-        let pitchFreq = appVars.pitchFreqRange[0] + cNorm * (appVars.pitchFreqRange[1] - appVars.pitchFreqRange[0]);
+        let pitchFreq = appVars.pitchFreqRange[0] + zNorm * (appVars.pitchFreqRange[1] - appVars.pitchFreqRange[0]);
         let gain = (appVars.apertureNormRadius - distanceNorm) / appVars.apertureNormRadius;
 
         if (pitchFreq != appVars.previousPitchFreq) {

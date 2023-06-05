@@ -1,6 +1,8 @@
 """Plotting functions."""
 
 from bs4 import BeautifulSoup
+from bokeh.colors import RGB
+import matplotlib as mpl
 from touch_sonify.paths import get_project_root_dir
 from typing import List, Dict, Optional
 from bokeh import events
@@ -13,7 +15,7 @@ from pathlib import Path
 def plot(
     x: List[float],
     y: List[float],
-    c: List[float],
+    z: List[float],
     output_file_path: Optional[Path] = None,
 ) -> Path:
     """
@@ -26,9 +28,17 @@ def plot(
     data_source = ColumnDataSource(dict(
         x=x,
         y=y,
-        c=c,
+        z=z,
     ))
-    p.scatter(x="x", y="y", color="c", source=data_source)
+
+    # use mpl colormap 
+    normalized_z = mpl.colors.Normalize()(z)
+    colors = [
+        (int(r), int(g), int(b))
+        for r, g, b, _ in 255 * mpl.cm.viridis(normalized_z)
+    ]
+
+    p.scatter(x=x, y=y, color=colors)
 
     custom_js_args = dict(
         xRange=p.x_range,
