@@ -8,6 +8,7 @@ from typing import List
 
 
 def main() -> None:
+    # Demo: two clusters
     def generate_3d_gaussian_points(means: List[float], stds: List[float], n: int) -> NDArray:
         arr = np.zeros([n, 3])
         for i in range(3):
@@ -32,7 +33,22 @@ def main() -> None:
     df = pd.DataFrame(data=data, columns=["x", "y", "z"])
     df.to_csv(get_project_root_dir() / "tests/inputs/twoClustersDemo.csv", index=False)
 
+    # Demo: spiral
+    n = 300
+    a = np.linspace(0, 1, n)
+    r = a * 10
+    theta = 2 * np.pi * a * 3
+    x = r * np.cos(theta)
+    y = r * np.sin(theta)
+    z = a * 100
+
+    df = pd.DataFrame(dict(
+        x=x,
+        y=y,
+        z=z,
+    ))
+    df.to_csv(get_project_root_dir() / "tests/inputs/spiralDemo.csv", index=False)
+
 
 if __name__ == "__main__":
     main()
-    

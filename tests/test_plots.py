@@ -1,15 +1,18 @@
 """Test modeule `plots.py`"""
 
 import pytest
-from touch_sonify.plots import plot
+from touch_sonify.plots import plot, plot_from_csv
 import pandas as pd
 
 def test_plot(project_root_dir):
     """Test plot"""
-    df = pd.read_csv(project_root_dir / "tests/inputs/twoClustersDemo.csv")
-    x = list(df["x"])
-    y = list(df["y"])
-    c = list(df["z"])
+    # two clusters
+    csv_file_path = project_root_dir / "tests/inputs/twoClustersDemo.csv"
+    output_file_path = project_root_dir / "tests/outputs/twoClustersDemo.html"
+    plot_from_csv(csv_file_path, output_file_path)
 
-    output_file_path = project_root_dir / "tests/outputs/test1.html"
-    plot(x, y, c, output_file_path=output_file_path)
+    # spiral
+    csv_file_path = project_root_dir / "tests/inputs/spiralDemo.csv"
+    output_file_path= project_root_dir / "tests/outputs/spiralDemo.html"
+    plot_from_csv(csv_file_path, output_file_path)
+    

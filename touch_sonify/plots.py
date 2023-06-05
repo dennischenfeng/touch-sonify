@@ -1,6 +1,7 @@
 """Plotting functions."""
 
 from bs4 import BeautifulSoup
+import pandas as pd
 from bokeh.colors import RGB
 import matplotlib as mpl
 from touch_sonify.paths import get_project_root_dir
@@ -137,3 +138,16 @@ def _insert_preparatory_html(file_path: Path) -> None:
 
     with open(file_path, "w") as f:
         f.write(str(soup))
+
+
+def plot_from_csv(
+    csv_file_path: Path, 
+    output_file_path: Optional[Path] = None
+) -> None:
+    """Plot from a given CSV file"""
+    df = pd.read_csv(csv_file_path)
+    x = list(df["x"])
+    y = list(df["y"])
+    z = list(df["z"])
+
+    plot(x, y, z, output_file_path=output_file_path)
