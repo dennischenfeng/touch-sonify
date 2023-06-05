@@ -12,7 +12,6 @@ def main() -> None:
         arr = np.zeros([n, 3])
         for i in range(3):
             values = np.random.normal(means[i], stds[i], n)
-            # values = values.round(decimals=1)
             arr[:, i] = values
         return arr
 
@@ -36,3 +35,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    
