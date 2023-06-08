@@ -49,6 +49,26 @@ def main() -> None:
     ))
     df.to_csv(get_project_root_dir() / "tests/inputs/spiralDemo.csv", index=False)
 
+    # demo: diamond heatmap
+    n = 50
+    unique_x = np.linspace(-10, 10, n)
+    unique_y = np.linspace(-10, 10, n)
+    def diamond(x: float, y: float) -> float:
+        val = 1 / (np.abs(x) + np.abs(y))
+        val = np.min(1, val)
+        return val
+
+    df = pd.DataFrame(columns=["x", "y", "z"])
+    for x in unique_x:
+        for y in unique_y:
+            row = pd.DataFrame(dict(
+                x=x,
+                y=y,
+                z=diamond(x, y),
+            ))
+            df = pd.concat((df, row), axis=0)
+    df.to_csv(get_project_root_dir() / "tests/inputs/diamondHeatmapDemo.csv", index=False)
+
 
 if __name__ == "__main__":
     main()
