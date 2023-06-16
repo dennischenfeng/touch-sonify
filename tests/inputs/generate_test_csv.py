@@ -34,10 +34,10 @@ def main() -> None:
     df.to_csv(get_project_root_dir() / "tests/inputs/twoClustersDemo.csv", index=False)
 
     # Demo: spiral
-    n = 300
+    n = 100
     a = np.linspace(0, 1, n)
     r = a * 10
-    theta = 2 * np.pi * a * 3
+    theta = 2 * np.pi * a
     x = r * np.cos(theta)
     y = r * np.sin(theta)
     z = a * 100
@@ -50,21 +50,21 @@ def main() -> None:
     df.to_csv(get_project_root_dir() / "tests/inputs/spiralDemo.csv", index=False)
 
     # demo: diamond heatmap
-    n = 50
-    unique_x = np.linspace(-10, 10, n)
-    unique_y = np.linspace(-10, 10, n)
+    n = 20
+    unique_x = np.linspace(-1.5, 1.5, n)
+    unique_y = np.linspace(-1.5, 1.5, n)
     def diamond(x: float, y: float) -> float:
-        val = 1 / (np.abs(x) + np.abs(y))
-        val = np.min(1, val)
+        val = 1 / (np.abs(x) + np.abs(0.75 * y))
+        val = np.min([1, val])
         return val
 
     df = pd.DataFrame(columns=["x", "y", "z"])
     for x in unique_x:
         for y in unique_y:
             row = pd.DataFrame(dict(
-                x=x,
-                y=y,
-                z=diamond(x, y),
+                x=[x],
+                y=[y],
+                z=[diamond(x, y)],
             ))
             df = pd.concat((df, row), axis=0)
     df.to_csv(get_project_root_dir() / "tests/inputs/diamondHeatmapDemo.csv", index=False)

@@ -15,4 +15,9 @@ def test_plot(project_root_dir):
     csv_file_path = project_root_dir / "tests/inputs/spiralDemo.csv"
     output_file_path= project_root_dir / "tests/outputs/spiralDemo.html"
     plot_from_csv(csv_file_path, output_file_path)
+
+    # diamond
+    csv_file_path = project_root_dir / "tests/inputs/diamondHeatmapDemo.csv"
+    output_file_path= project_root_dir / "tests/outputs/diamondHeatmapDemo.html"
+    plot_from_csv(csv_file_path, output_file_path)
     
